@@ -1,16 +1,14 @@
-import logo from './logo.svg';
-import TESTE from './images/TESTE.png'
 import React from 'react';
 import './App.css';
 import { MdControlPoint } from 'react-icons/md'
 import {Navbar, Button} from 'react-bootstrap';
-import CentroDeFornecimento from "./components/CentroDeFornecimento";
 import CentroDeFornecimentoForm from "./components/CentroDeFornecimentoForm";
 import PontoDeEntrega from "./components/PontoDeEntrega";
 import Optimizer from "./components/Optimizer";
 import NavBarPage from "./components/NavbarPage";
 import axios from "axios";
-import image from "./images/TESTE.png";
+import image from "./images/TESTE.png"; //Não vou precisar
+import { citiesData } from "./resources/cities";
 
 /**
  * Não usar o numberOf... para me guiar como index 
@@ -25,11 +23,13 @@ class App extends React.Component {
         numberOfPontoDeEntrega: 1,
         list_centroDeFornecimento: [{
           index: 0,
+          city: "",
           longitude: "",
           latitude: "",
         }],
         list_pontoDeEntrega: [{
           index: 0,
+          city: "",
           longitude: "",
           latitude: "",
           carga: "",
@@ -49,6 +49,12 @@ class App extends React.Component {
       this.addPontoDeEntrega = this.addPontoDeEntrega.bind(this);
     }
 
+
+    async componentDidMount() {
+      //fetch data do ficheiro json para depois procurar por long/lat
+      console.log(citiesData)
+    }
+
     ////////////////////////////////////////////
     ////// CENTRO DE FORNECIMENTO FUNCTIONS ////
     ////////////////////////////////////////////
@@ -59,6 +65,7 @@ class App extends React.Component {
       const new_index = this.state.numberOfCentroDeFornecimento+1;
       const centroDeFornecimento = {
         index: this.state.numberOfCentroDeFornecimento,
+        city: "",
         longitude: "",
         latitude: ""
       }
@@ -69,7 +76,7 @@ class App extends React.Component {
       });
     }
 
-    handleCentroDeFornecimento_longitude = (index, longitude) => {
+    /* handleCentroDeFornecimento_longitude = (index, longitude) => {
       let list_centroDeFornecimento = [...this.state.list_centroDeFornecimento];
       let centroDeFornecimento = {...list_centroDeFornecimento[index]}
       centroDeFornecimento.longitude = longitude;
@@ -83,7 +90,21 @@ class App extends React.Component {
       centroDeFornecimento.latitude = latitude;
       list_centroDeFornecimento[index] = centroDeFornecimento;
       this.setState({list_centroDeFornecimento});
-    }
+    } */
+
+    handleCentroDeFornecimento_city = (index, city_parameter) => {
+      let list_centroDeFornecimento = [...this.state.list_centroDeFornecimento];
+      let centroDeFornecimento = {...list_centroDeFornecimento[index]}
+      let city = city_parameter.toLowerCase()
+      let index_city = citiesData["index"][city]
+      centroDeFornecimento.city = city
+      if(index_city != undefined) {
+        centroDeFornecimento.latitude = citiesData["data"][index_city].lat;
+        centroDeFornecimento.longitude = citiesData["data"][index_city].lng;
+      }
+      list_centroDeFornecimento[index] = centroDeFornecimento;
+      this.setState({list_centroDeFornecimento});
+    } 
     
 
     removeCentroDeFornecimento = (index) => {
@@ -103,6 +124,7 @@ class App extends React.Component {
       const new_index = this.state.numberOfPontoDeEntrega+1;
       const pontoDeEntrega = {
         index: this.state.numberOfPontoDeEntrega,
+        city: "",
         longitude: "",
         latitude: "",
         carga: "",
@@ -115,7 +137,7 @@ class App extends React.Component {
       });
     }
 
-    handlePontoDeEntrega_longitude = (index, longitude) => {
+    /* handlePontoDeEntrega_longitude = (index, longitude) => {
       let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
       let pontoDeEntrega = {...list_pontoDeEntrega[index]}
       pontoDeEntrega.longitude = longitude;
@@ -127,6 +149,20 @@ class App extends React.Component {
       let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
       let pontoDeEntrega = {...list_pontoDeEntrega[index]}
       pontoDeEntrega.latitude = latitude;
+      list_pontoDeEntrega[index] = pontoDeEntrega;
+      this.setState({list_pontoDeEntrega});
+    } */
+
+    handlePontoDeEntrega_city = (index, city_parameter) => {
+      let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
+      let pontoDeEntrega = {...list_pontoDeEntrega[index]}
+      let city = city_parameter.toLowerCase();
+      let index_city = citiesData["index"][city]
+      console.log("Ponto de entrega: ", index_city)
+      if(index_city != undefined) {
+        pontoDeEntrega.latitude = citiesData["data"][index_city].lat;
+        pontoDeEntrega.longitude = citiesData["data"][index_city].lng;
+      }
       list_pontoDeEntrega[index] = pontoDeEntrega;
       this.setState({list_pontoDeEntrega});
     }
@@ -162,23 +198,33 @@ class App extends React.Component {
 
     
     showConsole = () => {
-      console.log(image)
+      console.log(this.state)
     }
 
     testing = async (event) => {
       const response = await axios.get("/processor/")
       console.log(response)
     }
+
+    test_city = async(event) => {
+      const city = "lisbon"
+      let index_city = citiesData["index"][city]
+      console.log(index_city)
+      console.log("Latitude: ", citiesData["data"][index_city].lat)
+      console.log("Longitude: ", citiesData["data"][index_city].lng)
+    }
+
+    //Talvez não seja necessário
     /**
      * 
      * Teste para ir buscar a imagem à pasta images
      */
-    showImage = async(event) => {
+/*     showImage = async(event) => {
       event.preventDefault();
       const image = require('./images/TESTE.png');
       this.setState({showImage: true, image_path: image});
     }
-
+ */
     render() {
       let render;
       // Teste para ir buscar a imagem à pasta images
@@ -190,16 +236,18 @@ class App extends React.Component {
               <NavBarPage />
               <CentroDeFornecimentoForm 
                 list={this.state.list_centroDeFornecimento}
-                handleCentroDeFornecimento_longitude={this.handleCentroDeFornecimento_longitude.bind(this)}
-                handleCentroDeFornecimento_latitude={this.handleCentroDeFornecimento_latitude.bind(this)}
+                /* handleCentroDeFornecimento_longitude={this.handleCentroDeFornecimento_longitude.bind(this)}
+                handleCentroDeFornecimento_latitude={this.handleCentroDeFornecimento_latitude.bind(this)} */
+                handleCentroDeFornecimento_city={this.handleCentroDeFornecimento_city.bind(this)}
                 removeCentroDeFornecimento={this.removeCentroDeFornecimento.bind(this)}
               />
               <Button onClick={this.addCentroDeFornecimento}><MdControlPoint /></Button>
               <br></br>
               <PontoDeEntrega
                 list={this.state.list_pontoDeEntrega}
-                handlePontoDeEntrega_longitude={this.handleCentroDeFornecimento_longitude.bind(this)}
-                handlePontoDeEntrega_latitude={this.handleCentroDeFornecimento_latitude.bind(this)}
+                /* handlePontoDeEntrega_longitude={this.handlePontoDeEntrega_longitude.bind(this)}
+                handlePontoDeEntrega_latitude={this.handlePontoDeEntrega_latitude.bind(this)} */
+                handlePontoDeEntrega_city={this.handlePontoDeEntrega_city.bind(this)}
                 handlePontoDeEntrega_carga={this.handlePontoDeEntrega_carga}
                 handlePontoDeEntrega_prioridade={this.handlePontoDeEntrega_prioridade}
                 removePontoDeEntrega={this.removeCentroDeFornecimento.bind(this)}
@@ -210,8 +258,10 @@ class App extends React.Component {
               <br></br><br></br>
               <Button onClick={this.showConsole}>Show State</Button>
               <br></br>
-              <Button onClick={this.testing}>Test API</Button>
-              <Button onClick={this.showImage}>Show Image</Button>
+              <Button onClick={this.test_city}>Show City</Button>
+              <br></br>
+              {/* <Button onClick={this.testing}>Test API</Button>
+              <Button onClick={this.showImage}>Show Image</Button> */}
               {/* <img src={"static/image.png"} /> */}
               {render}
         </div>

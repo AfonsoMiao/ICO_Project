@@ -7,12 +7,16 @@ import {Navbar, Button} from 'react-bootstrap';
 class CentroDeFornecimentoForm extends React.Component {
 
 
-    onFormChange_longitude = async (event, index) => {
+    /* onFormChange_longitude = async (event, index) => {
         this.props.handleCentroDeFornecimento_longitude(index, event.target.value)
     }
 
     onFormChange_latitude = async (event, index) => {
         this.props.handleCentroDeFornecimento_latitude(index, event.target.value)
+    } */
+
+    onFormChange_city = async (event, index) => {
+        this.props.handleCentroDeFornecimento_city(index, event.target.value)
     }
 
     removeForm = async(index) => {
@@ -29,14 +33,18 @@ class CentroDeFornecimentoForm extends React.Component {
             <ListGroup.Item key={object_index} style={style}>
                 <Form>
                     <Form.Row>
-                        <Form.Group as={Col} controlId="formFornecimentoLongitude">
+                        <Form.Group as={Col} controlId="formFornecimentoCidade">
+                            <Form.Label>Cidade</Form.Label>
+                            <Form.Control placeholder="Cidade" onChange={(e) => this.onFormChange_city(e, object_index)}/>
+                        </Form.Group>
+                       {/*  <Form.Group as={Col} controlId="formFornecimentoLongitude">
                             <Form.Label>Longitude</Form.Label>
                             <Form.Control placeholder="Longitude" onChange={(e) => this.onFormChange_longitude(e, object_index)}/>
                         </Form.Group>
                         <Form.Group as={Col} controlId="formFornecimentoLatitude">
                             <Form.Label>Latitude</Form.Label>
                             <Form.Control placeholder="Latitude" onChange={(e) => this.onFormChange_latitude(e, object_index)}/>
-                        </Form.Group>
+                        </Form.Group> */}
                         <Button onClick={(e) => this.removeForm(object_index)}>Delete</Button>
                     </Form.Row>
                 </Form>
