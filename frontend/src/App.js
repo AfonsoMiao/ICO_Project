@@ -41,6 +41,8 @@ class App extends React.Component {
 
         }],
         list_toOptimize: [],
+        solution: "",
+        showSolution: false,
         showImage: false,
         image_path: null,
       }
@@ -159,6 +161,7 @@ class App extends React.Component {
       let city = city_parameter.toLowerCase();
       let index_city = citiesData["index"][city]
       console.log("Ponto de entrega: ", index_city)
+      pontoDeEntrega.city = city
       if(index_city != undefined) {
         pontoDeEntrega.latitude = citiesData["data"][index_city].lat;
         pontoDeEntrega.longitude = citiesData["data"][index_city].lng;
@@ -201,25 +204,94 @@ class App extends React.Component {
       console.log(this.state)
     }
 
-    testing = async (event) => {
-      const response = await axios.get("/processor/")
+    otimize = async (event) => {
+      const final_json = this.create_final_json();
+      const response = await axios.post("/processor/", final_json);
       console.log(response)
+      this.setState({solution: response["data"], showSolution: true})
     }
 
-
-    /**
-     * 
-     *  
-     */
-    test_create_ultimate_json = async(event) => {
+    create_final_json = () => {
       let array_json = [];
-      const all_items = this.this.state.list_centroDeFornecimento.concat(this.state.list_pontoDeEntrega)
-      for(let i = 0; i < all_items.length; i++) {
-        array_json.push({
+      let index_json = {};
+      let i = 1;
 
-        })
-      }
+      this.state.list_centroDeFornecimento.forEach(element => {
+        array_json.push({
+          "node": i,
+          "city": element.city,
+          "latitude": element.latitude,
+          "longitude": element.longitude,
+          "depot": "true"
+        });
+        i++;
+      });
+
+      this.state.list_pontoDeEntrega.forEach(element => {
+        array_json.push({
+          "node": i,
+          "city": element.city,
+          "latitude": element.latitude,
+          "longitude": element.longitude,
+          "depot": "false"
+        });
+        i++;
+      });
+      console.log(array_json)
+      array_json.forEach(element => {
+        let new_index = {}
+        new_index[element.node] = element.city
+        index_json = Object.assign(new_index, index_json);
+      });
+    
+      let final_json = {};
+      final_json["index"] = index_json;
+      final_json["data"] = array_json
+      console.log("Final JSON: ", final_json)
+      return final_json
     }
+
+
+    /* create_final_json = async(event) => {
+      let array_json = [];
+      let index_json = {};
+      let i = 0;
+
+      this.state.list_centroDeFornecimento.forEach(element => {
+        array_json.push({
+          "node": i,
+          "city": element.city,
+          "latitude": element.latitude,
+          "longitude": element.longitude,
+          "depot": "true"
+        });
+        i++;
+      });
+
+      this.state.list_pontoDeEntrega.forEach(element => {
+        array_json.push({
+          "node": i,
+          "city": element.city,
+          "latitude": element.latitude,
+          "longitude": element.longitude,
+          "depot": "false"
+        });
+        i++;
+      });
+      console.log(array_json)
+      array_json.forEach(element => {
+        let new_index = {}
+        new_index[element.node] = element.city
+        index_json = Object.assign(new_index, index_json);
+      });
+    
+      let final_json = {};
+      final_json["index"] = index_json;
+      final_json["data"] = array_json
+      console.log("Final JSON: ", final_json)
+      return final_json
+    } */
+    
 
     //Talvez não seja necessário
     /**
@@ -235,8 +307,11 @@ class App extends React.Component {
     render() {
       let render;
       // Teste para ir buscar a imagem à pasta images
-      if(this.state.showImage == true) {
+      /* if(this.state.showImage == true) {
         render = <img src={this.state.image_path.default} />
+      } */
+      if(this.state.showSolution == true) {
+        render = <div>{JSON.stringify(this.state.solution)}</div>
       }
       return (
         <div>
@@ -265,7 +340,9 @@ class App extends React.Component {
               <br></br><br></br>
               <Button onClick={this.showConsole}>Show State</Button>
               <br></br>
-              <Button onClick={this.test_city}>Show City</Button>
+              {/* <Button onClick={this.create_final_json}>Create JSON</Button>
+              <br></br> */}
+              <Button onClick={this.otimize}>Otimizar</Button>
               <br></br>
               {/* <Button onClick={this.testing}>Test API</Button>
               <Button onClick={this.showImage}>Show Image</Button> */}
