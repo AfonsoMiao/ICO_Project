@@ -206,12 +206,19 @@ class App extends React.Component {
       console.log(response)
     }
 
-    test_city = async(event) => {
-      const city = "lisbon"
-      let index_city = citiesData["index"][city]
-      console.log(index_city)
-      console.log("Latitude: ", citiesData["data"][index_city].lat)
-      console.log("Longitude: ", citiesData["data"][index_city].lng)
+
+    /**
+     * 
+     *  
+     */
+    test_create_ultimate_json = async(event) => {
+      let array_json = [];
+      const all_items = this.this.state.list_centroDeFornecimento.concat(this.state.list_pontoDeEntrega)
+      for(let i = 0; i < all_items.length; i++) {
+        array_json.push({
+
+        })
+      }
     }
 
     //Talvez não seja necessário
