@@ -208,7 +208,7 @@ class App extends React.Component {
       const final_json = this.create_final_json();
       const response = await axios.post("/processor/", final_json);
       console.log(response)
-      this.setState({solution: response["data"], showSolution: true})
+      this.setState({solution: JSON.stringify(response["data"]), showSolution: true})
     }
 
     create_final_json = () => {

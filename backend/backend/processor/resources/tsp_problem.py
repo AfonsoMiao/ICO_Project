@@ -38,12 +38,19 @@ class CENARIO1(PermutationProblem):
 
         dimension = int(len(data["data"]))
         c = [-1.0] * (2 * dimension)
+        delivery_points_x = [-1] * (dimension)
+        delivery_points_y = [-1] * (dimension)
         for item in data["data"]:
             j = int(item["node"])
             if item["depot"] == "true":
                 self.depot = [j-1]
-            c[2 * (j - 1)] = float(item["latitude"])
-            c[2 * (j - 1) + 1] = float(item["longitude"])
+            #c[2 * (j - 1)] = float(item["latitude"])
+            #c[2 * (j - 1) + 1] = float(item["longitude"])
+            delivery_points_x[j-1] = float(item["latitude"])
+            delivery_points_y[j-1] = float(item["longitude"])
+
+        print("delivety points x: ", delivery_points_x)
+        print("delivety points y: ", delivery_points_y)
 
         matrix = [[-1] * dimension for _ in range(dimension)]
 
@@ -51,8 +58,9 @@ class CENARIO1(PermutationProblem):
             matrix[k][k] = 0
 
             for j in range(k + 1, dimension):
-                dist = math.sqrt((c[k * 2] - c[j * 2]) ** 2 + (c[k * 2 + 1] - c[j * 2 + 1]) ** 2)
-                dist = round(dist)
+                #dist = math.sqrt((c[k * 2] - c[j * 2]) ** 2 + (c[k * 2 + 1] - c[j * 2 + 1]) ** 2)
+                dist = math.sqrt((delivery_points_x[k] - delivery_points_x[j]) ** 2 + (delivery_points_y[k] - delivery_points_y[j]) ** 2)
+                #dist = round(dist)
                 matrix[k][j] = dist
                 matrix[j][k] = dist
         print(matrix)
@@ -80,6 +88,7 @@ class CENARIO1(PermutationProblem):
         new_solution = PermutationSolution(number_of_variables=self.number_of_variables,
                                            number_of_objectives=self.number_of_objectives)
         new_solution.variables = self.depot + random.sample(range(1,self.number_of_variables), k=self.number_of_variables-1)
+        #print("Solution: ", new_solution.variables)
         return new_solution
 
     @property

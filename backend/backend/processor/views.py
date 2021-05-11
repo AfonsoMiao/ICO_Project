@@ -60,6 +60,8 @@ def cenario1(data: dict):
   print('Computing time: {}'.format(algorithm.total_computing_time))
   return array
 
+""" def cenario2(data: dict): """
+
 
 """ problem = ZDT1()
 
