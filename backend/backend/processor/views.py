@@ -47,18 +47,17 @@ def cenario1(data: dict):
   algorithm.run()
   result = algorithm.get_result()
 
-  array = [None] * len(result.variables)
+  """ array = [None] * len(result.variables)
   for i in range(len(result.variables)):
-      array[i] = data["index"].get(str(result.variables[i] + 1 ))
+      array[i] = data["index"].get(str(result.variables[i] + 1 )) """
 
   array_nodes = numpy.array(result.variables) + 1
   print('Algorithm: {}'.format(algorithm.get_name()))
   print('Problem: {}'.format(problem.get_name()))
-  print('Solution: {}'.format(array_nodes.tolist()))
-  print("Final Solution: ", array)
+  print('Solution: {}'.format(result.variables))
   print('Fitness: {}'.format(result.objectives[0]))
   print('Computing time: {}'.format(algorithm.total_computing_time))
-  return array
+  return result.variables
 
 """ def cenario2(data: dict): """
 

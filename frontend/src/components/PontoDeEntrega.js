@@ -10,17 +10,17 @@ import {Navbar, Button} from 'react-bootstrap';
 class PontoDeEntrega extends React.Component {
 
 
-    /* onFormChange_longitude = async (event, index) => {
+    onFormChange_longitude = async (event, index) => {
         this.props.handlePontoDeEntrega_longitude(index, event.target.value)
     }
 
     onFormChange_latitude = async (event, index) => {
         this.props.handlePontoDeEntrega_latitude(index, event.target.value)
-    } */
-
-    onFormChange_city = async (event, index) => {
-        this.props.handlePontoDeEntrega_city(index, event.target.value)
     }
+
+    /* onFormChange_city = async (event, index) => {
+        this.props.handlePontoDeEntrega_city(index, event.target.value)
+    } */
 
     onFormChange_carga = async (event, index) => {
         this.props.handlePontoDeEntrega_carga(index, event.target.value)
@@ -40,23 +40,25 @@ class PontoDeEntrega extends React.Component {
         //console.log("scrollableStyle: ", scrollableStyle)
         for(const [index, value] of this.props.list.entries()) {
             let object_index = value.index;
+            let latitude = value.latitude;
+            let longitude = value.longitude;
             let style = (index != (this.props.list.length-1)) ? {borderBottom: "none"} : null
             pontoDeEntrega_render.push(
             <ListGroup.Item key={object_index} style={style}>
                 <Form>
                     <Form.Row>
-                       {/*  <Form.Group as={Col} controlId="formEntregaLongitude">
+                        <Form.Group as={Col} controlId="formEntregaLongitude">
                             <Form.Label>Longitude</Form.Label>
-                            <Form.Control placeholder="Longitude" onChange={(e) => this.onFormChange_longitude(e, object_index)}/>
+                            <Form.Control placeholder="Longitude" value={longitude} onChange={(e) => this.onFormChange_longitude(e, object_index)}/>
                         </Form.Group>
                         <Form.Group as={Col} controlId="formEntregaLatitude">
                             <Form.Label>Latitude</Form.Label>
-                            <Form.Control placeholder="Latitude" onChange={(e) => this.onFormChange_latitude(e, object_index)}/>
-                        </Form.Group> */}
-                        <Form.Group as={Col} controlId="formEntregaCity">
+                            <Form.Control placeholder="Latitude" value={latitude} onChange={(e) => this.onFormChange_latitude(e, object_index)}/>
+                        </Form.Group>
+                        {/* <Form.Group as={Col} controlId="formEntregaCity">
                             <Form.Label>Cidade</Form.Label>
                             <Form.Control placeholder="Cidade" onChange={(e) => this.onFormChange_city(e, object_index)}/>
-                        </Form.Group>
+                        </Form.Group> */}
                         <Form.Group as={Col} controlId="formEntregaCarga">
                             <Form.Label>Carga</Form.Label>
                             <Form.Control placeholder="Carga" onChange={(e) => this.onFormChange_carga(e, object_index)}/>

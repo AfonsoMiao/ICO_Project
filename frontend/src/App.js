@@ -20,34 +20,59 @@ class App extends React.Component {
       super(props);
       this.state = {
         numberOfCentroDeFornecimento: 1,
-        numberOfPontoDeEntrega: 1,
+        numberOfPontoDeEntrega: 3,
         list_centroDeFornecimento: [{
           index: 0,
-          city: "",
-          longitude: "",
-          latitude: "",
+          city: "Lisboa",
+          longitude: "-9.1604",
+          latitude: "38.7452",
         }],
         list_pontoDeEntrega: [{
           index: 0,
-          city: "",
-          longitude: "",
-          latitude: "",
+          city: "Porto",
+          longitude: "-8.6108",
+          latitude: "41.1495",
           carga: "",
           prioridade: ""
-        }],
+        },
+        {
+          index: 1,
+          city: "Braga",
+          longitude: "-8.4167",
+          latitude: "41.5333",
+          carga: "",
+          prioridade: ""
+        },
+        {
+          index: 2,
+          city: "Torres Vedras",
+          longitude: "-9.2667",
+          latitude: "39.0833",
+          carga: "",
+          prioridade: ""
+        },
+        {
+          index: 3,
+          city: "Setubal",
+          longitude: "-8.8926",
+          latitude: "38.5243",
+          carga: "",
+          prioridade: ""
+        }
+        ],
         numberOfVeiculo: 1,
         list_veiculo: [{
           index: 0,
 
         }],
-        list_toOptimize: [],
+        list_toOptimize: [0,0,0],
         solution: "",
         showSolution: false,
         showImage: false,
         image_path: null,
       }
 
-      this.addCentroDeFornecimento = this.addCentroDeFornecimento.bind(this);
+      /* this.addCentroDeFornecimento = this.addCentroDeFornecimento.bind(this); */
       this.addPontoDeEntrega = this.addPontoDeEntrega.bind(this);
     }
 
@@ -61,7 +86,8 @@ class App extends React.Component {
     ////// CENTRO DE FORNECIMENTO FUNCTIONS ////
     ////////////////////////////////////////////
 
-    addCentroDeFornecimento = async(event) => {
+    // Vamos utilizar apenas 1 centro de fornecimento
+    /* addCentroDeFornecimento = async(event) => {
       event.preventDefault();
       console.log("Adicionar novo centro de fornecimento")
       const new_index = this.state.numberOfCentroDeFornecimento+1;
@@ -76,9 +102,9 @@ class App extends React.Component {
         numberOfCentroDeFornecimento: new_index,
         list_centroDeFornecimento: new_list
       });
-    }
+    } */
 
-    /* handleCentroDeFornecimento_longitude = (index, longitude) => {
+    handleCentroDeFornecimento_longitude = (index, longitude) => {
       let list_centroDeFornecimento = [...this.state.list_centroDeFornecimento];
       let centroDeFornecimento = {...list_centroDeFornecimento[index]}
       centroDeFornecimento.longitude = longitude;
@@ -92,9 +118,9 @@ class App extends React.Component {
       centroDeFornecimento.latitude = latitude;
       list_centroDeFornecimento[index] = centroDeFornecimento;
       this.setState({list_centroDeFornecimento});
-    } */
+    }
 
-    handleCentroDeFornecimento_city = (index, city_parameter) => {
+    /* handleCentroDeFornecimento_city = (index, city_parameter) => {
       let list_centroDeFornecimento = [...this.state.list_centroDeFornecimento];
       let centroDeFornecimento = {...list_centroDeFornecimento[index]}
       let city = city_parameter.toLowerCase()
@@ -106,14 +132,14 @@ class App extends React.Component {
       }
       list_centroDeFornecimento[index] = centroDeFornecimento;
       this.setState({list_centroDeFornecimento});
-    } 
+    }  */
     
 
-    removeCentroDeFornecimento = (index) => {
+    /* removeCentroDeFornecimento = (index) => {
       const numberOfCentroDeFornecimento = this.state.numberOfCentroDeFornecimento - 1;
       let list_centroDeFornecimento = this.state.list_centroDeFornecimento.filter((cf) => cf.index !== index);
       this.setState({numberOfCentroDeFornecimento, list_centroDeFornecimento})
-    }
+    } */
 
 
     ////////////////////////////////////////////
@@ -139,7 +165,7 @@ class App extends React.Component {
       });
     }
 
-    /* handlePontoDeEntrega_longitude = (index, longitude) => {
+    handlePontoDeEntrega_longitude = (index, longitude) => {
       let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
       let pontoDeEntrega = {...list_pontoDeEntrega[index]}
       pontoDeEntrega.longitude = longitude;
@@ -153,9 +179,9 @@ class App extends React.Component {
       pontoDeEntrega.latitude = latitude;
       list_pontoDeEntrega[index] = pontoDeEntrega;
       this.setState({list_pontoDeEntrega});
-    } */
+    }
 
-    handlePontoDeEntrega_city = (index, city_parameter) => {
+   /*  handlePontoDeEntrega_city = (index, city_parameter) => {
       let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
       let pontoDeEntrega = {...list_pontoDeEntrega[index]}
       let city = city_parameter.toLowerCase();
@@ -168,7 +194,7 @@ class App extends React.Component {
       }
       list_pontoDeEntrega[index] = pontoDeEntrega;
       this.setState({list_pontoDeEntrega});
-    }
+    } */
 
     handlePontoDeEntrega_carga = (index, carga) => {
       let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
@@ -199,6 +225,37 @@ class App extends React.Component {
       
     } */
 
+    ////////////////////////////////////////////
+    /////////    OPTIMIZER FUNCTIONS     ///////
+    ////////////////////////////////////////////
+
+    //handle what to optimize
+    handleOptimizer = (option) => {
+      let index = 0;
+      console.log("Option: ", option)
+      switch(option) {
+        case 'Minimizar distância':
+          index = 0;
+          break;
+        case 'Minimizar tempo':
+          index = 1;
+          break;
+        case 'Minimizar veículos':
+          index = 2;
+          break;
+        default:
+          alert.error("Error while selecting option")
+      }
+      let list_toOptimize = [...this.state.list_toOptimize];
+      list_toOptimize[index] = (list_toOptimize[index] == 0) ? 1 : 0;
+      this.setState({list_toOptimize})
+    }
+
+
+    ////////////////////////////////////////////
+    /////////     OTHER FUNCTIONS        ///////
+    ////////////////////////////////////////////
+
     
     showConsole = () => {
       console.log(this.state)
@@ -206,6 +263,7 @@ class App extends React.Component {
 
     otimize = async (event) => {
       const final_json = this.create_final_json();
+      console.log(final_json)
       const response = await axios.post("/processor/", final_json);
       console.log(response)
       this.setState({solution: JSON.stringify(response["data"]), showSolution: true})
@@ -214,7 +272,7 @@ class App extends React.Component {
     create_final_json = () => {
       let array_json = [];
       let index_json = {};
-      let i = 1;
+      let i = 0;
 
       this.state.list_centroDeFornecimento.forEach(element => {
         array_json.push({
@@ -237,16 +295,16 @@ class App extends React.Component {
         });
         i++;
       });
-      console.log(array_json)
+      /* console.log(array_json)
       array_json.forEach(element => {
         let new_index = {}
         new_index[element.node] = element.city
         index_json = Object.assign(new_index, index_json);
-      });
+      }); */
     
       let final_json = {};
-      final_json["index"] = index_json;
-      final_json["data"] = array_json
+      /* final_json["index"] = index_json; */
+      final_json["data_nodes"] = array_json
       console.log("Final JSON: ", final_json)
       return final_json
     }
@@ -318,25 +376,27 @@ class App extends React.Component {
               <NavBarPage />
               <CentroDeFornecimentoForm 
                 list={this.state.list_centroDeFornecimento}
-                /* handleCentroDeFornecimento_longitude={this.handleCentroDeFornecimento_longitude.bind(this)}
-                handleCentroDeFornecimento_latitude={this.handleCentroDeFornecimento_latitude.bind(this)} */
-                handleCentroDeFornecimento_city={this.handleCentroDeFornecimento_city.bind(this)}
-                removeCentroDeFornecimento={this.removeCentroDeFornecimento.bind(this)}
+                handleCentroDeFornecimento_longitude={this.handleCentroDeFornecimento_longitude.bind(this)}
+                handleCentroDeFornecimento_latitude={this.handleCentroDeFornecimento_latitude.bind(this)}
+                /* handleCentroDeFornecimento_city={this.handleCentroDeFornecimento_city.bind(this)}
+                removeCentroDeFornecimento={this.removeCentroDeFornecimento.bind(this)} */
               />
-              <Button onClick={this.addCentroDeFornecimento}><MdControlPoint /></Button>
+              {/* <Button onClick={this.addCentroDeFornecimento}><MdControlPoint /></Button> */}
               <br></br>
               <PontoDeEntrega
                 list={this.state.list_pontoDeEntrega}
-                /* handlePontoDeEntrega_longitude={this.handlePontoDeEntrega_longitude.bind(this)}
-                handlePontoDeEntrega_latitude={this.handlePontoDeEntrega_latitude.bind(this)} */
-                handlePontoDeEntrega_city={this.handlePontoDeEntrega_city.bind(this)}
+                handlePontoDeEntrega_longitude={this.handlePontoDeEntrega_longitude.bind(this)}
+                handlePontoDeEntrega_latitude={this.handlePontoDeEntrega_latitude.bind(this)}
+                /* handlePontoDeEntrega_city={this.handlePontoDeEntrega_city.bind(this)} */
                 handlePontoDeEntrega_carga={this.handlePontoDeEntrega_carga}
                 handlePontoDeEntrega_prioridade={this.handlePontoDeEntrega_prioridade}
-                removePontoDeEntrega={this.removeCentroDeFornecimento.bind(this)}
+                removePontoDeEntrega={this.removePontoDeEntrega.bind(this)}
               />
               <Button onClick={this.addPontoDeEntrega}><MdControlPoint /></Button>
               <br></br>
-              <Optimizer />
+              <Optimizer 
+                handleOptimizer={this.handleOptimizer.bind(this)}
+              />
               <br></br><br></br>
               <Button onClick={this.showConsole}>Show State</Button>
               <br></br>
