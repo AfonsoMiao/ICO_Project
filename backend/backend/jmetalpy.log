@@ -108,3 +108,5 @@
 2021-04-01 01:11:16,830 [Thread-1    ] [INFO ]  Output file (variables): VAR.NSGAII.ZDT1
 2021-04-01 01:12:49,547 [Thread-1    ] [INFO ]  Output file (function values): FUN.NSGAII.ZDT1
 2021-04-01 01:12:49,550 [Thread-1    ] [INFO ]  Output file (variables): VAR.NSGAII.ZDT1
+2021-05-23 19:44:42,760 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-23 19:44:42,764 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP

@@ -6,6 +6,7 @@ import CentroDeFornecimentoForm from "./components/CentroDeFornecimentoForm";
 import PontoDeEntrega from "./components/PontoDeEntrega";
 import Optimizer from "./components/Optimizer";
 import NavBarPage from "./components/NavbarPage";
+import Vehicle from "./components/Vehicle";
 import axios from "axios";
 import image from "./images/TESTE.png"; //Não vou precisar
 import { citiesData } from "./resources/cities";
@@ -21,6 +22,7 @@ class App extends React.Component {
       this.state = {
         numberOfCentroDeFornecimento: 1,
         numberOfPontoDeEntrega: 3,
+        numberOfVehicles:0,
         list_centroDeFornecimento: [{
           index: 0,
           city: "Lisboa",
@@ -32,39 +34,47 @@ class App extends React.Component {
           city: "Porto",
           longitude: "-8.6108",
           latitude: "41.1495",
-          carga: "",
-          prioridade: ""
+          carga: "20"
         },
         {
           index: 1,
           city: "Braga",
           longitude: "-8.4167",
           latitude: "41.5333",
-          carga: "",
-          prioridade: ""
+          carga: "10"
         },
         {
           index: 2,
           city: "Torres Vedras",
           longitude: "-9.2667",
           latitude: "39.0833",
-          carga: "",
-          prioridade: ""
+          carga: "30"
         },
         {
           index: 3,
           city: "Setubal",
           longitude: "-8.8926",
           latitude: "38.5243",
-          carga: "",
-          prioridade: ""
+          carga: "5"
         }
         ],
-        numberOfVeiculo: 1,
         list_veiculo: [{
           index: 0,
-
-        }],
+          capacidade: 100,
+          custo: 1.5
+        },
+        {
+          index: 1,
+          capacidade: 100,
+          custo: 0.5
+        },
+        {
+          index: 2,
+          capacidade: 100,
+          custo: 0.3
+        }
+        ],
+        /* list_veiculo: [], */
         list_toOptimize: [0,0,0],
         solution: "",
         showSolution: false,
@@ -203,14 +213,6 @@ class App extends React.Component {
       list_pontoDeEntrega[index] = pontoDeEntrega;
       this.setState({list_pontoDeEntrega});
     }
-    
-    handlePontoDeEntrega_prioridade = (index, prioridade) => {
-      let list_pontoDeEntrega = [...this.state.list_pontoDeEntrega];
-      let pontoDeEntrega = {...list_pontoDeEntrega[index]}
-      pontoDeEntrega.prioridade = prioridade;
-      list_pontoDeEntrega[index] = pontoDeEntrega;
-      this.setState({list_pontoDeEntrega});
-    }
 
     removePontoDeEntrega = (index) => {
       const numberOfPontoDeEntrega = this.state.numberOfPontoDeEntrega - 1;
@@ -218,12 +220,46 @@ class App extends React.Component {
       this.setState({numberOfPontoDeEntrega, list_pontoDeEntrega})
     }
 
-    /**
-     * Ir buscar todos os valores que existem e chamar a função do jmetal através do django
-     */
-   /*  optimizeAlgorithm = () => {
-      
-    } */
+    ////////////////////////////////////////////
+    /////////    VEHICLE FUNCTIONS   ///////////
+    ////////////////////////////////////////////
+    addVehicle = async(event) => {
+      event.preventDefault();
+      console.log("Adicionar novo veiculo")
+      const new_index = this.state.numberOfVehicles+1;
+      const vehicle = {
+        index: this.state.numberOfVehicles,
+        capacidade: "",
+        custo: ""
+      }
+      const new_list = this.state.list_veiculo.concat(vehicle);
+      this.setState({
+        numberOfVehicles: new_index,
+        list_veiculo: new_list
+      });
+    }
+
+    handleVeiculo_capacidade = (index, capacidade) => {
+      let list_veiculo = [...this.state.list_veiculo];
+      let vehicle = {...list_veiculo[index]}
+      vehicle.capacidade = capacidade;
+      list_veiculo[index] = vehicle;
+      this.setState({list_veiculo});
+    }
+
+    handleVeiculo_custo = (index, custo) => {
+      let list_veiculo = [...this.state.list_veiculo];
+      let vehicle = {...list_veiculo[index]}
+      vehicle.custo = custo;
+      list_veiculo[index] = vehicle;
+      this.setState({list_veiculo});
+    }
+
+    removeVehicle = (index) => {
+      const numberOfVehicle = this.state.numberOfVehicles - 1;
+      let list_veiculo = this.state.list_veiculo.filter((pe) => pe.index !== index);
+      this.setState({numberOfVehicle, list_veiculo})
+    }
 
     ////////////////////////////////////////////
     /////////    OPTIMIZER FUNCTIONS     ///////
@@ -262,16 +298,23 @@ class App extends React.Component {
     }
 
     otimize = async (event) => {
-      const final_json = this.create_final_json();
-      console.log(final_json)
-      const response = await axios.post("/processor/", final_json);
-      console.log(response)
-      this.setState({solution: JSON.stringify(response["data"]), showSolution: true})
+      const options = this.state.list_toOptimize.filter((flag) => flag == 1)
+      if(options.length == 0) {
+        alert("Selecione uma otimização")
+      } else {
+        const final_json = this.create_final_json();
+        console.log(final_json)
+        const response = await axios.post("/processor/", final_json);
+        console.log("Received: ", response["data"])
+        const solution_json = JSON.parse(response["data"])
+        console.log("SOLUTION JSON: ", solution_json)
+        this.setState({solution: solution_json, showSolution: true})
+      }
     }
 
     create_final_json = () => {
       let array_json = [];
-      let index_json = {};
+      let vehicle_json = [];
       let i = 0;
 
       this.state.list_centroDeFornecimento.forEach(element => {
@@ -280,6 +323,7 @@ class App extends React.Component {
           "city": element.city,
           "latitude": element.latitude,
           "longitude": element.longitude,
+          "demand": "0",
           "depot": "true"
         });
         i++;
@@ -291,10 +335,22 @@ class App extends React.Component {
           "city": element.city,
           "latitude": element.latitude,
           "longitude": element.longitude,
+          "demand": element.carga,
           "depot": "false"
         });
         i++;
       });
+
+      i = 0;
+      this.state.list_veiculo.forEach(element => {
+        vehicle_json.push({
+          "id": i,
+          "capacity": element.capacidade,
+          "cost": element.custo
+        });
+        i++;
+      });
+
       /* console.log(array_json)
       array_json.forEach(element => {
         let new_index = {}
@@ -304,52 +360,12 @@ class App extends React.Component {
     
       let final_json = {};
       /* final_json["index"] = index_json; */
+      final_json["data_vehicles"] = vehicle_json
       final_json["data_nodes"] = array_json
-      console.log("Final JSON: ", final_json)
+      final_json["optimization"] = this.state.list_toOptimize
+      //console.log("Final JSON: ", final_json)
       return final_json
     }
-
-
-    /* create_final_json = async(event) => {
-      let array_json = [];
-      let index_json = {};
-      let i = 0;
-
-      this.state.list_centroDeFornecimento.forEach(element => {
-        array_json.push({
-          "node": i,
-          "city": element.city,
-          "latitude": element.latitude,
-          "longitude": element.longitude,
-          "depot": "true"
-        });
-        i++;
-      });
-
-      this.state.list_pontoDeEntrega.forEach(element => {
-        array_json.push({
-          "node": i,
-          "city": element.city,
-          "latitude": element.latitude,
-          "longitude": element.longitude,
-          "depot": "false"
-        });
-        i++;
-      });
-      console.log(array_json)
-      array_json.forEach(element => {
-        let new_index = {}
-        new_index[element.node] = element.city
-        index_json = Object.assign(new_index, index_json);
-      });
-    
-      let final_json = {};
-      final_json["index"] = index_json;
-      final_json["data"] = array_json
-      console.log("Final JSON: ", final_json)
-      return final_json
-    } */
-    
 
     //Talvez não seja necessário
     /**
@@ -363,14 +379,49 @@ class App extends React.Component {
     }
  */
     render() {
-      let render;
+      let render = [];
       // Teste para ir buscar a imagem à pasta images
       /* if(this.state.showImage == true) {
         render = <img src={this.state.image_path.default} />
       } */
       if(this.state.showSolution == true) {
-        render = <div>{JSON.stringify(this.state.solution)}</div>
+        //const raw_solution = '{"solutions":[{"solution":"1","route":[{"vehicle":"1","sub_route":["18","15","2","7","13","17","8","6","1","21","12","5","20"]},{"vehicle":"2","sub_route":["14","3","11","10","19","4","16"]},{"vehicle":"3","sub_route":["9"]}]},{"solution":"2","route":[{"vehicle":"1","sub_route":["18","15","2","7","13","17","8","6","1","21","12","5","20"]},{"vehicle":"2","sub_route":["3","9","11","10","19","4"]},{"vehicle":"3","sub_route":["14","16"]}]},{"solution":"3","route":[{"vehicle":"1","sub_route":["18","15","2","7","13","17","8","6","1","21","12","5","20"]},{"vehicle":"2","sub_route":["3","9","11","10","19","4"]},{"vehicle":"3","sub_route":["14","16"]}]}]}';
+        //const solution = JSON.stringify(this.state.solution)
+        const solution = this.state.solution
+        //console.log(solution["solutions"])
+        //console.log(solution["solutions"].length)
+        //console.log("testing: ",solution["solutions"][0]["route"])
+        console.log(solution["solutions"])
+        for(let i = 0; i < solution["solutions"].length; i++) {
+          console.log(i)
+          render.push(<h4 style={{marginTop: "10px"}}>Solution {i}</h4>)
+          for(let k = 0; k < solution["solutions"][i]["route"].length; k++) {
+            let car_id = solution["solutions"][i]["route"][k]["vehicle"]
+            let car_route = solution["solutions"][i]["route"][k]["sub_route"].toString()
+            console.log("Vehicle: ", car_id)
+            console.log("car_route", car_route)
+            render.push(
+              <div>
+                <div><strong>Vehicle {car_id}:</strong> {car_route}</div>
+              </div>
+            )
+          }
+        } 
       }
+        /* for(const [index, value] of solution["solutions"]) {
+          for(const [index2, value2] of solution["solutions"][index]["route"]) {
+            let car_vehicle = solution["solutions"][index]["route"][index2]["vehicle"]
+            let car_route = solution["solutions"][index]["route"][index2]["sub_route"]
+            render.push(
+              <div>
+                <h4>Vehicle {car_vehicle}</h4>
+                <div>Route: {car_route}</div>
+              </div>
+            )
+          }
+        } */
+        /* render = <div>{JSON.stringify(this.state.solution)}</div> */
+      //}
       return (
         <div>
               <NavBarPage />
@@ -392,22 +443,33 @@ class App extends React.Component {
                 handlePontoDeEntrega_prioridade={this.handlePontoDeEntrega_prioridade}
                 removePontoDeEntrega={this.removePontoDeEntrega.bind(this)}
               />
-              <Button onClick={this.addPontoDeEntrega}><MdControlPoint /></Button>
+              <Button style={{marginLeft: "10px"}} onClick={this.addPontoDeEntrega}><MdControlPoint /></Button>
               <br></br>
+              <Vehicle
+                list={this.state.list_veiculo}
+                handleVehicle_capacity={this.handleVeiculo_capacidade.bind(this)}
+                handleVehicle_cost={this.handleVeiculo_custo.bind(this)}
+                removeVehicle={this.removeVehicle.bind(this)}
+              />
+              <br></br>
+              <Button style={{marginLeft: "10px"}} onClick={this.addVehicle}><MdControlPoint /></Button>
               <Optimizer 
                 handleOptimizer={this.handleOptimizer.bind(this)}
               />
               <br></br><br></br>
-              <Button onClick={this.showConsole}>Show State</Button>
+              <Button style={{margin: "10px"}} onClick={this.showConsole}>Show State</Button>
               <br></br>
               {/* <Button onClick={this.create_final_json}>Create JSON</Button>
               <br></br> */}
-              <Button onClick={this.otimize}>Otimizar</Button>
+              <Button style={{marginLeft: "10px"}} onClick={this.otimize}>Otimizar</Button>
               <br></br>
               {/* <Button onClick={this.testing}>Test API</Button>
               <Button onClick={this.showImage}>Show Image</Button> */}
               {/* <img src={"static/image.png"} /> */}
-              {render}
+              <div style={{margin: "10px"}}>
+                {render}
+              </div>
+
         </div>
       );
   }
