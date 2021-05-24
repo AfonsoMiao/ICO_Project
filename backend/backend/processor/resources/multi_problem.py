@@ -203,6 +203,7 @@ class CVRP(PermutationProblem):
         fitness1 = 0 #distance
         fitness2 = 0 #cost
         fitness3 = 0 #tempo
+        fitness4 = 0 #veiculos
 
         matrix_route = []
         sub_route = []
@@ -248,31 +249,40 @@ class CVRP(PermutationProblem):
                 distance_to_warehouse = self.distance_to_warehouse[x-1] * 2
                 fitness1 += distance_to_warehouse
                 fitness2 += distance_to_warehouse * self.vehicle_costs[car]
-                fitness3 = self.times_to_warehouse[x-1] * 2
+                time_compare = self.times_to_warehouse[x-1] * 2
+                if time_compare > fitness3:
+                    fitness3 = time_compare
 
                 if route_demand > self.vehicle_capacities[car]:
                     fitness1 += 99999999
                     fitness2 += 99999999
                     print("Surpassed capacity")
                 index_car += 1
+                fitness4 += 1
             else: # sub_route -> [9,4,5] // [9,4] 
+                time_compare = 0
                 for i in range(len(sub_route) - 1):
                     x = sub_route[i]
                     y = sub_route[i + 1]
-
+                    
                     if i == 0:
                         distance_to_warehouse = self.distance_to_warehouse[x-1]
                         fitness1 += distance_to_warehouse   
                         fitness2 += distance_to_warehouse * self.vehicle_costs[car]
-                        fitness3 = self.times_to_warehouse[x-1] * 2
+                        time_compare += self.times_to_warehouse[x-1]
                         route_demand += self.demand_section[x-1]
                     route_demand = self.demand_section[y-1]
                     if route_demand > self.vehicle_capacities[car]:
                             fitness1 += 99999999
                             fitness2 += 99999999
+                            fitness3 += 99999999
                     fitness1 += self.distance_matrix[x][y]
                     fitness2 += self.distance_matrix[x][y] * self.vehicle_costs[car]
-                    fitness3 += self.time_matrix[x][y]
+                    time_compare += self.time_matrix[x][y]
+
+                if time_compare > fitness3:
+                    fitness3 = time_compare
+                fitness4 += 1
                 index_car += 1
 
         #Atribuir os fitnesses aos objetivos
@@ -283,6 +293,8 @@ class CVRP(PermutationProblem):
                 solution.objectives[i] = fitness2
             if self.fitnesses_to_evaluate[i] == "fitness3":
                 solution.objectives[i] = fitness3
+            if self.fitnesses_to_evaluate[i] == "fitness4":
+                solution.objectives[i] = fitness4
         
         #solution.objectives[0] = fitness1
         #solution.objectives[1] = fitness2

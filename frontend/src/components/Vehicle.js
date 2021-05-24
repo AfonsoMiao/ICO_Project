@@ -33,6 +33,10 @@ class Vehicle extends React.Component {
             <ListGroup.Item key={object_index} style={style}>
                 <Form>
                     <Form.Row>
+                        <Form.Group controlId="idVehicle">
+                            <Form.Label></Form.Label>
+                            <div style={{margin: "10px"}}><strong>{object_index + 1}</strong></div>
+                        </Form.Group>
                         <Form.Group as={Col} controlId="formVehicleCapacity">
                             <Form.Label>Capacity</Form.Label>
                             <Form.Control placeholder="Capacity" value={capacity} onChange={(e) => this.onFormChange_capacity(e, object_index)}/>

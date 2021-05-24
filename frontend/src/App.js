@@ -75,7 +75,7 @@ class App extends React.Component {
         }
         ],
         /* list_veiculo: [], */
-        list_toOptimize: [0,0,0],
+        list_toOptimize: [0,0,0,0],
         solution: "",
         showSolution: false,
         showImage: false,
@@ -273,11 +273,14 @@ class App extends React.Component {
         case 'Minimizar distância':
           index = 0;
           break;
-        case 'Minimizar tempo':
+        case 'Minimizar custo':
           index = 1;
           break;
-        case 'Minimizar veículos':
+        case 'Minimizar tempo':
           index = 2;
+          break;
+        case 'Minimizar veículos':
+          index = 3;
           break;
         default:
           alert.error("Error while selecting option")
@@ -300,8 +303,10 @@ class App extends React.Component {
     otimize = async (event) => {
       const options = this.state.list_toOptimize.filter((flag) => flag == 1)
       if(options.length == 0) {
-        alert("Selecione uma otimização")
-      } else {
+        alert("Selecione 1 otimização")
+      } else if (this.state.list_veiculo == 0) {
+        alert("Introduza 1 veículo")
+      }else {
         const final_json = this.create_final_json();
         console.log(final_json)
         const response = await axios.post("/processor/", final_json);
@@ -456,9 +461,9 @@ class App extends React.Component {
               <Optimizer 
                 handleOptimizer={this.handleOptimizer.bind(this)}
               />
-              <br></br><br></br>
-              <Button style={{margin: "10px"}} onClick={this.showConsole}>Show State</Button>
-              <br></br>
+              <br></br>{/* <br></br> */}
+              {/* <Button style={{margin: "10px"}} onClick={this.showConsole}>Show State</Button> */}
+              {/* <br></br> */}
               {/* <Button onClick={this.create_final_json}>Create JSON</Button>
               <br></br> */}
               <Button style={{marginLeft: "10px"}} onClick={this.otimize}>Otimizar</Button>

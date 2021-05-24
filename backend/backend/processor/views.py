@@ -29,7 +29,9 @@ def process(request):
     # organize parameters to send to algorithm
       # implement a switch to know which algorithm to execute
     json_data = json.loads(request.body)
-    if json_data['data_vehicles'] == []:
+    print("Option selected: ", json_data['optimization'][0])
+    print("Number of cars: ", len(json_data['data_vehicles']))
+    if len(json_data['data_vehicles']) == 1 and json_data['optimization'][0] == 1:
         print("TSP Problem")
         solution = tsp_problem(json_data)
     else:
@@ -40,35 +42,48 @@ def process(request):
 
 # Functions to run problems
 def tsp_problem(data: dict):
-  problem = CENARIO1(instance=data)
-  print('Cities: ', problem.number_of_variables)
+    problem = CENARIO1(instance=data)
+    print('Cities: ', problem.number_of_variables)
 
-  algorithm = GeneticAlgorithm(
-      problem=problem,
-      population_size=100,
-      offspring_population_size=100,
-      mutation=PermutationSwapMutation(1.0 / problem.number_of_variables),
-      crossover=PMXCrossover(0.8),
-      selection=BinaryTournamentSelection(
-          MultiComparator([FastNonDominatedRanking.get_comparator(),
-                              CrowdingDistance.get_comparator()])),
-      termination_criterion=StoppingByEvaluations(max_evaluations=2500000)
-  )
+    algorithm = GeneticAlgorithm(
+        problem=problem,
+        population_size=100,
+        offspring_population_size=100,
+        mutation=PermutationSwapMutation(1.0 / problem.number_of_variables),
+        crossover=PMXCrossover(0.8),
+        selection=BinaryTournamentSelection(
+            MultiComparator([FastNonDominatedRanking.get_comparator(),
+                                CrowdingDistance.get_comparator()])),
+        termination_criterion=StoppingByEvaluations(max_evaluations=2500000)
+    )
 
-  algorithm.run()
-  result = algorithm.get_result()
+    algorithm.run()
+    result = algorithm.get_result()
 
-  print('Algorithm: {}'.format(algorithm.get_name()))
-  print('Problem: {}'.format(problem.get_name()))
-  print('Solution: {}'.format(result.variables))
-  print('Fitness: {}'.format(result.objectives[0]))
-  print('Computing time: {}'.format(algorithm.total_computing_time))
-  return result.variables
+  # Each solution has a route
+    data = {}
+    data["solutions"] = []
+    sub_route = []
+    sub_route.append({
+        "vehicle": "0",
+        "sub_route": result.variables[1:]
+    })
+    data["solutions"].append({
+        "solution": "0",
+        "route": sub_route
+    })
+
+    print('Algorithm: {}'.format(algorithm.get_name()))
+    print('Problem: {}'.format(problem.get_name()))
+    print('Solution: {}'.format(result.variables))
+    print('Fitness: {}'.format(result.objectives[0]))
+    print('Computing time: {}'.format(algorithm.total_computing_time))
+    return data
 
 def multi_problem(data: dict):
     problem = CVRP(data)
 
-    max_evaluations = 250000
+    max_evaluations = 1000 #veiculo * pontos_entrega * 1000
     dimension = 100
 
     algorithm = NSGAII(
