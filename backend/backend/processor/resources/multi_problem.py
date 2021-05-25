@@ -12,7 +12,8 @@ from abc import ABC
 class CVRP(PermutationProblem):
     """ Class representing TSP Problem. """
 
-    def __init__(self, instance: dict = None, instance2: dict = None):
+    #def __init__(self, instance: dict = None, instance2: dict = None):
+    def __init__(self, instance: dict = None, number_objetives: int = None):
         super(CVRP, self).__init__()
 
         self.num_vehicles = len(instance["data_vehicles"])
@@ -21,6 +22,8 @@ class CVRP(PermutationProblem):
         """ cost_matrix, cost_to_warehouse, demand_section, dimension, vehicle_capacity, depot_node = self.__read_from_file_cost(instance2)
         distance_matrix, distance_to_warehouse, dimension, vehicle_capacity, depot_node = self.__read_from_file_distance(instance) """
         distance_matrix, time_matrix, number_cities, distance_to_warehouse, vehicle_costs, vehicle_capacities, demand_section, dimension, fitnesses_to_evaluate, times_to_warehouse = self.__create_matrixes(instance)
+        print("Number of objectives: ", number_objetives)
+        print("Fitnesses to evaluate: ", fitnesses_to_evaluate)
         print("Distance matrix: ", distance_matrix)
         print("Demand section: ", demand_section)
         print("Time matrix: ", time_matrix)
@@ -40,7 +43,7 @@ class CVRP(PermutationProblem):
         self.obj_directions = [self.MINIMIZE]
         self.fitnesses_to_evaluate = fitnesses_to_evaluate
         self.number_of_variables = dimension
-        self.number_of_objectives = 2
+        self.number_of_objectives = number_objetives
         self.number_of_constraints = 0
         self.times_to_warehouse = times_to_warehouse
 
@@ -101,9 +104,10 @@ class CVRP(PermutationProblem):
 
         #Defining fitnesses that will be evaluated
         optimization_array = data['optimization']
+        #print("OPTIMIZATION ARRAY: ", optimization_array)
         fitnesses_to_evaluate = []
         for i in range(len(optimization_array)):
-            if optimization_array[i] == "1":
+            if optimization_array[i] == 1:
                 fitnesses_to_evaluate.append("fitness" + str(i +1))
 
         return matrix_distance, matrix_time, number_cities, distances_to_warehouse, vehicle_costs, vehicle_capacity, demand_section, number_delivery_points, fitnesses_to_evaluate, times_to_warehouse
@@ -288,12 +292,16 @@ class CVRP(PermutationProblem):
         #Atribuir os fitnesses aos objetivos
         for i in range(len(self.fitnesses_to_evaluate)):
             if self.fitnesses_to_evaluate[i] == "fitness1":
+                print("Using fitness1")
                 solution.objectives[i] = fitness1
             if self.fitnesses_to_evaluate[i] == "fitness2":
+                print("Using fitness2")
                 solution.objectives[i] = fitness2
             if self.fitnesses_to_evaluate[i] == "fitness3":
+                print("Using fitness3")
                 solution.objectives[i] = fitness3
             if self.fitnesses_to_evaluate[i] == "fitness4":
+                print("Using fitness4")
                 solution.objectives[i] = fitness4
         
         #solution.objectives[0] = fitness1

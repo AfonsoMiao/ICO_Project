@@ -14,8 +14,9 @@ class Optimizer extends React.Component {
                 <h1>Otimização</h1>
                 <Form>
                     <Form.Check onChange={this.onSelect.bind(this)} type={"checkbox"} label="Minimizar distância" value="Minimizar distância"/>
-                    <Form.Check onChange={this.onSelect.bind(this)} type={"checkbox"} label="Minimizar custo" value="Minimizar tempo"/>
-                    <Form.Check onChange={this.onSelect.bind(this)} type={"checkbox"} label="Minimizar tempo" value="Minimizar veículos"/>
+                    <Form.Check onChange={this.onSelect.bind(this)} type={"checkbox"} label="Minimizar custo" value="Minimizar custo"/>
+                    <Form.Check onChange={this.onSelect.bind(this)} type={"checkbox"} label="Minimizar tempo" value="Minimizar tempo"/>
+                    <Form.Check onChange={this.onSelect.bind(this)} type={"checkbox"} label="Minimizar veículos" value="Minimizar veículos"/>
                 </Form>
             </div>
         );
