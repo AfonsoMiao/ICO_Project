@@ -292,16 +292,12 @@ class CVRP(PermutationProblem):
         #Atribuir os fitnesses aos objetivos
         for i in range(len(self.fitnesses_to_evaluate)):
             if self.fitnesses_to_evaluate[i] == "fitness1":
-                print("Using fitness1")
                 solution.objectives[i] = fitness1
             if self.fitnesses_to_evaluate[i] == "fitness2":
-                print("Using fitness2")
                 solution.objectives[i] = fitness2
             if self.fitnesses_to_evaluate[i] == "fitness3":
-                print("Using fitness3")
                 solution.objectives[i] = fitness3
             if self.fitnesses_to_evaluate[i] == "fitness4":
-                print("Using fitness4")
                 solution.objectives[i] = fitness4
         
         #solution.objectives[0] = fitness1

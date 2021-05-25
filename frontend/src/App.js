@@ -21,8 +21,8 @@ class App extends React.Component {
       super(props);
       this.state = {
         numberOfCentroDeFornecimento: 1,
-        numberOfPontoDeEntrega: 3,
-        numberOfVehicles:0,
+        numberOfPontoDeEntrega: 4,
+        numberOfVehicles:3,
         list_centroDeFornecimento: [{
           index: 0,
           city: "Lisboa",
@@ -217,6 +217,7 @@ class App extends React.Component {
     removePontoDeEntrega = (index) => {
       const numberOfPontoDeEntrega = this.state.numberOfPontoDeEntrega - 1;
       let list_pontoDeEntrega = this.state.list_pontoDeEntrega.filter((pe) => pe.index !== index);
+      console.log(numberOfPontoDeEntrega)
       this.setState({numberOfPontoDeEntrega, list_pontoDeEntrega})
     }
 

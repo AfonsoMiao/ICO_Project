@@ -63,7 +63,7 @@ def tsp_problem(data: dict):
         selection=BinaryTournamentSelection(
             MultiComparator([FastNonDominatedRanking.get_comparator(),
                                 CrowdingDistance.get_comparator()])),
-        termination_criterion=StoppingByEvaluations(max_evaluations=2500000)
+        termination_criterion=StoppingByEvaluations(max_evaluations=15000)
     )
 
     algorithm.run()
@@ -92,7 +92,7 @@ def tsp_problem(data: dict):
 def single_problem(data: dict, number_of_objectives: int):
     problem = CVRP(data,number_of_objectives)
 
-    max_evaluations = 1000 #veiculo * pontos_entrega * 1000
+    max_evaluations = 15000 #veiculo * pontos_entrega * 1000
     dimension = 100
 
     algorithm = GeneticAlgorithm(
@@ -104,7 +104,7 @@ def single_problem(data: dict, number_of_objectives: int):
         selection=BinaryTournamentSelection(
             MultiComparator([FastNonDominatedRanking.get_comparator(),
                                 CrowdingDistance.get_comparator()])),
-        termination_criterion=StoppingByEvaluations(max_evaluations=2500000)
+        termination_criterion=StoppingByEvaluations(max_evaluations=15000)
     )
 
 
@@ -149,7 +149,7 @@ def single_problem(data: dict, number_of_objectives: int):
 def multi_problem(data: dict, number_of_objectives: int):
     problem = CVRP(data,number_of_objectives)
 
-    max_evaluations = 1000 #veiculo * pontos_entrega * 1000
+    max_evaluations = 15000 #veiculo * pontos_entrega * 1000
     dimension = 100
 
     algorithm = NSGAII(
