@@ -402,16 +402,16 @@ class App extends React.Component {
         for(let i = 0; i < solution["solutions"].length; i++) {
           console.log(i)
           if(show_optimal_solution == true && i == 1) {
-            render.push(<h4 style={{marginTop: "10px"}}>Solution {i} (Optimal)</h4>)
+            render.push(<h4 style={{marginTop: "10px"}}>Solução {i} (Equilibrada)</h4>)
           } else {
-            render.push(<h4 style={{marginTop: "10px"}}>Solution {i}</h4>)
+            render.push(<h4 style={{marginTop: "10px"}}>Solução {i}</h4>)
           }
           for(let k = 0; k < solution["solutions"][i]["route"].length; k++) {
             let car_id = solution["solutions"][i]["route"][k]["vehicle"]
             let car_route = solution["solutions"][i]["route"][k]["sub_route"].toString()
             render.push(
               <div>
-                <div><strong>Vehicle {car_id}:</strong> {car_route}</div>
+                <div><strong>Veículo {car_id}:</strong> {car_route}</div>
               </div>
             )
           }

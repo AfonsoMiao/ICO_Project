@@ -121,7 +121,6 @@ class CENARIO1(PermutationProblem):
         new_solution = PermutationSolution(number_of_variables=self.number_of_variables,
                                            number_of_objectives=self.number_of_objectives)
         new_solution.variables = self.depot + random.sample(range(1,self.number_of_variables), k=self.number_of_variables-1)
-        #print("Solution: ", new_solution.variables)
         return new_solution
 
     @property

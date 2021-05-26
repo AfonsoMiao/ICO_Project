@@ -74,7 +74,7 @@ class PontoDeEntrega extends React.Component {
                             <Form.Control placeholder="Prioridade" onChange={(e) => this.onFormChange_prioridade(e, object_index)}/>
                         </Form.Group> */}
                         <div style={{marginTop: "32px"}}>
-                            <Button onClick={(e) => this.removeForm(object_index)}>Delete</Button>
+                            <Button onClick={(e) => this.removeForm(object_index)}>Apagar</Button>
                         </div>
                     </Form.Row>
                 </Form>

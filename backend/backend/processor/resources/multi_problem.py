@@ -275,15 +275,28 @@ class CVRP(PermutationProblem):
                         fitness2 += distance_to_warehouse * self.vehicle_costs[car]
                         time_compare += self.times_to_warehouse[x-1]
                         route_demand += self.demand_section[x-1]
+                        #Changes here
+                        if route_demand > self.vehicle_capacities[car]:
+                            fitness1 += 99999999
+                            fitness2 += 99999999
+                            fitness3 += 99999999
+                        continue
+                        
                     route_demand = self.demand_section[y-1]
                     if route_demand > self.vehicle_capacities[car]:
                             fitness1 += 99999999
                             fitness2 += 99999999
                             fitness3 += 99999999
+                            continue
                     fitness1 += self.distance_matrix[x][y]
                     fitness2 += self.distance_matrix[x][y] * self.vehicle_costs[car]
                     time_compare += self.time_matrix[x][y]
-
+                
+                #Soma nó final até à warehouse
+                fitness1 += self.distance_to_warehouse[y-1]
+                fitness2 += self.distance_to_warehouse[y-1] * self.vehicle_costs[car]
+                time_compare += self.times_to_warehouse[y-1]
+                
                 if time_compare > fitness3:
                     fitness3 = time_compare
                 fitness4 += 1
@@ -309,10 +322,6 @@ class CVRP(PermutationProblem):
     def create_solution(self) -> PermutationSolution:
         new_solution = PermutationSolution(number_of_variables=self.number_of_variables,
                                            number_of_objectives=self.number_of_objectives)
-
-        #destination = [self.number_of_variables]
-        #random.seed(1)
-        #new_solution.variables = random.sample(range(2,self.number_of_variables), k=self.number_of_variables - 1)
         
         random_nodes = random.sample(range(1,self.number_of_variables+1), k=self.number_of_variables)
         cars_to_add = self.num_vehicles - 1
@@ -324,7 +333,6 @@ class CVRP(PermutationProblem):
         random.shuffle(random_nodes)
 
         new_solution.variables = random_nodes
-        #print(random_nodes)
         return new_solution
 
 

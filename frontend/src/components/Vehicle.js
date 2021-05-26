@@ -38,15 +38,15 @@ class Vehicle extends React.Component {
                             <div style={{margin: "10px"}}><strong>{object_index + 1}</strong></div>
                         </Form.Group>
                         <Form.Group as={Col} controlId="formVehicleCapacity">
-                            <Form.Label>Capacity</Form.Label>
+                            <Form.Label>Capacidade</Form.Label>
                             <Form.Control placeholder="Capacity" value={capacity} onChange={(e) => this.onFormChange_capacity(e, object_index)}/>
                         </Form.Group>
                         <Form.Group as={Col} controlId="formVehicleCost">
-                            <Form.Label>Cost</Form.Label>
+                            <Form.Label>Custo</Form.Label>
                             <Form.Control placeholder="Cost" value={cost} onChange={(e) => this.onFormChange_cost(e, object_index)}/>
                         </Form.Group>
                         <div style={{marginTop: "32px"}}>
-                            <Button onClick={(e) => this.removeVehicle(object_index)}>Delete</Button>
+                            <Button onClick={(e) => this.removeVehicle(object_index)}>Apagar</Button>
                         </div>
                     </Form.Row>
                 </Form>

@@ -146,3 +146,29 @@
 2021-05-25 21:58:50,943 [Thread-3    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
 2021-05-25 21:59:47,813 [Thread-5    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
 2021-05-25 21:59:47,815 [Thread-5    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:00:29,150 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:00:29,152 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:12:24,326 [Thread-3    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:12:24,328 [Thread-3    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:16:35,587 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:16:35,590 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:17:10,054 [Thread-3    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:17:10,058 [Thread-3    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:17:53,173 [Thread-5    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:17:53,174 [Thread-5    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:19:11,597 [Thread-7    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:19:11,600 [Thread-7    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 22:19:46,313 [Thread-9    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 22:19:46,314 [Thread-9    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-25 23:25:37,318 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-25 23:25:37,321 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-26 21:48:17,751 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-26 21:48:17,754 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-26 23:01:03,778 [Thread-3    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-26 23:01:03,781 [Thread-3    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-26 23:02:12,098 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-26 23:02:12,100 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-26 23:04:53,399 [Thread-1    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-26 23:04:53,401 [Thread-1    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP
+2021-05-26 23:06:02,077 [Thread-3    ] [INFO ]  Output file (function values): output/tmp/FUN.NSGAII-CVRP
+2021-05-26 23:06:02,078 [Thread-3    ] [INFO ]  Output file (variables): output/tmp/VAR.NSGAII-CVRP

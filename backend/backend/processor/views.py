@@ -16,7 +16,8 @@ from processor.resources.tsp_problem import CENARIO1
 from processor.resources.multi_problem import CVRP
 from jmetal.util.solution import get_non_dominated_solutions, print_function_values_to_file, print_variables_to_file
 from jmetal.lab.visualization import Plot
-import numpy
+import numpy as np
+import pandas as pd
 import os
 import pathlib
 import json
@@ -26,9 +27,7 @@ import math
 # Create your views here. localhost:8000/process
 @csrf_exempt
 def process(request):
-  #if request.method == 'POST':
-    # organize parameters to send to algorithm
-      # implement a switch to know which algorithm to execute
+
     json_data = json.loads(request.body)
     
     optimization_array = json_data['optimization']
@@ -92,7 +91,8 @@ def tsp_problem(data: dict):
 def single_problem(data: dict, number_of_objectives: int):
     problem = CVRP(data,number_of_objectives)
 
-    max_evaluations = 15000 #veiculo * pontos_entrega * 1000
+    #max_evaluations = 15000 #veiculo * pontos_entrega * 1000
+    max_evaluations = len(data['data_vehicles']) * len(data['data_nodes']) * 1000
     dimension = 100
 
     algorithm = GeneticAlgorithm(
@@ -149,7 +149,9 @@ def single_problem(data: dict, number_of_objectives: int):
 def multi_problem(data: dict, number_of_objectives: int):
     problem = CVRP(data,number_of_objectives)
 
-    max_evaluations = 15000 #veiculo * pontos_entrega * 1000
+    #max_evaluations = 15000 #veiculo * pontos_entrega * 1000
+    max_evaluations = len(data['data_vehicles']) * len(data['data_nodes']) * 1000
+    print("Number of evaluations: ", max_evaluations)
     dimension = 100
 
     algorithm = NSGAII(
@@ -169,19 +171,24 @@ def multi_problem(data: dict, number_of_objectives: int):
 
     solutions_to_pass = []
     result_length = len(front)
-    if result_length == 3:
-        solutions_to_pass.append(front[0].variables)
-        solutions_to_pass.append(front[1].variables)
-        solutions_to_pass.append(front[result_length-1].variables)
-    elif result_length > 3:
-        solutions_to_pass.append(front[0].variables)
-        #solutions_to_pass.append(front[round(result_length) - 1].variables)
-        index_front_pareto = calculate_pareto(front)
-        solutions_to_pass.append(front[index_front_pareto].variables)
-        solutions_to_pass.append(front[result_length-1].variables)
-    elif result_length < 3:
-        for solution in front:
-            solutions_to_pass.append(solution.variables)
+    if number_of_objectives < 3:
+        if result_length == 3:
+            solutions_to_pass.append(front[0].variables)
+            solutions_to_pass.append(front[1].variables)
+            solutions_to_pass.append(front[result_length-1].variables)
+        elif result_length > 3:
+            solutions_to_pass.append(front[0].variables)
+            #solutions_to_pass.append(front[round(result_length) - 1].variables)
+            index_front_pareto = calculate_pareto(front)
+            solutions_to_pass.append(front[index_front_pareto].variables)
+            solutions_to_pass.append(front[result_length-1].variables)
+        elif result_length < 3:
+            for solution in front:
+                solutions_to_pass.append(solution.variables)
+    else:
+        array_index = calculate_solutions_more_3_objectives(front)
+        for index in array_index:
+            solutions_to_pass.append(front[index].variables)
 
     solution_frontend = []
     sub_route = []
@@ -223,8 +230,6 @@ def multi_problem(data: dict, number_of_objectives: int):
         })
     print_function_values_to_file(front, 'output/tmp/FUN.'+ algorithm.get_name()+"-"+problem.get_name())
     print_variables_to_file(front, 'output/tmp/VAR.' + algorithm.get_name()+"-"+problem.get_name())
-    #plot_front = Plot(title='Pareto front approximation', axis_labels=['distance cost', 'vehicle cost'])
-    #plot_front.plot(front, label='NSGAII-CVRP (25000 evals)', filename='output/tmp/NSGAII-CVRP', format='png')
 
     print('Algorithm (continuous problem): ' + algorithm.get_name())
     print('Problem: ' + problem.get_name())
@@ -247,3 +252,27 @@ def calculate_pareto(objectives_array: list):
     front_pareto_index = results_array.index(min(results_array))
     print("Front pareto index: ", front_pareto_index)
     return front_pareto_index
+
+def calculate_solutions_more_3_objectives(objectives_array: list):
+    array_pd = []
+    for solution in objectives_array:
+        array_pd.append(solution.objectives)
+    df = pd.DataFrame(array_pd)
+    result = df.idxmin(axis=0, skipna=True)
+
+    solution_index_each_objective = result.tolist()
+
+    results_array = []
+    for objective_array in objectives_array:
+        total = 0
+        for objective in objective_array.objectives:
+            total += objective**2
+        results_array.append(math.sqrt(total))
+        
+    front_pareto_index = results_array.index(min(results_array))
+    solution_index_each_objective.append(front_pareto_index)
+    print(solution_index_each_objective)
+
+
+    print("Indexes of best solution each objective + frontpareto: ", solution_index_each_objective)
+    return solution_index_each_objective
