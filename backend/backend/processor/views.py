@@ -123,19 +123,22 @@ def single_problem(data: dict, number_of_objectives: int):
             matrix_route.append(sub_route)
             sub_route = []
     matrix_route.append(sub_route)
+    print("Matrix route single problem: ", matrix_route)
+    print("Matrix route last subroute: ", matrix_route[2])
     # Each solution has a route
     data = {}
     data["solutions"] = []
+    route_append = []
     for i in range(len(matrix_route)):
-        route = matrix_route[i]
-        sub_route.append({
+        route_append.append({
             "vehicle": str(i+1),
-            "sub_route": route
+            "sub_route": matrix_route[i]
         })
+
             
     data["solutions"].append({
         "solution": "1",
-        "route": sub_route
+        "route": route_append
     })
 
     print('Algorithm: {}'.format(algorithm.get_name()))
@@ -171,6 +174,7 @@ def multi_problem(data: dict, number_of_objectives: int):
 
     solutions_to_pass = []
     result_length = len(front)
+    #Solucoes com menos de 3 objetivos
     if number_of_objectives < 3:
         if result_length == 3:
             solutions_to_pass.append(front[0].variables)
@@ -178,13 +182,13 @@ def multi_problem(data: dict, number_of_objectives: int):
             solutions_to_pass.append(front[result_length-1].variables)
         elif result_length > 3:
             solutions_to_pass.append(front[0].variables)
-            #solutions_to_pass.append(front[round(result_length) - 1].variables)
             index_front_pareto = calculate_pareto(front)
             solutions_to_pass.append(front[index_front_pareto].variables)
             solutions_to_pass.append(front[result_length-1].variables)
         elif result_length < 3:
             for solution in front:
                 solutions_to_pass.append(solution.variables)
+    #Solucoes com mais de 3 objetivos
     else:
         array_index = calculate_solutions_more_3_objectives(front)
         for index in array_index:

@@ -217,8 +217,19 @@ class App extends React.Component {
     removePontoDeEntrega = (index) => {
       const numberOfPontoDeEntrega = this.state.numberOfPontoDeEntrega - 1;
       let list_pontoDeEntrega = this.state.list_pontoDeEntrega.filter((pe) => pe.index !== index);
-      console.log(numberOfPontoDeEntrega)
-      this.setState({numberOfPontoDeEntrega, list_pontoDeEntrega})
+      let newList = []
+      for(let i = 0; i < numberOfPontoDeEntrega; i++) {
+        console.log(list_pontoDeEntrega[i])
+        newList.push({
+          index: i,
+          city: list_pontoDeEntrega[i].city,
+          longitude: list_pontoDeEntrega[i].longitude,
+          latitude: list_pontoDeEntrega[i].latitude,
+          carga: list_pontoDeEntrega[i].carga
+        })
+      }
+      console.log(newList)
+      this.setState({numberOfPontoDeEntrega: numberOfPontoDeEntrega, list_pontoDeEntrega: newList})
     }
 
     ////////////////////////////////////////////
@@ -257,9 +268,20 @@ class App extends React.Component {
     }
 
     removeVehicle = (index) => {
-      const numberOfVehicle = this.state.numberOfVehicles - 1;
+      const numberOfVehicles = this.state.numberOfVehicles - 1;
       let list_veiculo = this.state.list_veiculo.filter((pe) => pe.index !== index);
-      this.setState({numberOfVehicle, list_veiculo})
+      console.log("List veiculo:", list_veiculo)
+      let newList = []
+      for(let i = 0; i < numberOfVehicles; i++) {
+        console.log(i)
+        newList.push({
+          index: i,
+          capacidade: list_veiculo[i].capacidade,
+          custo: list_veiculo[i].custo
+        })
+      }
+      console.log(newList)
+      this.setState({numberOfVehicles: numberOfVehicles, list_veiculo: newList})
     }
 
     ////////////////////////////////////////////
