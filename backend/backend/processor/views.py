@@ -91,13 +91,13 @@ def tsp_problem(data: dict):
 def single_problem(data: dict, number_of_objectives: int):
     problem = CVRP(data,number_of_objectives)
 
-    #max_evaluations = 15000 #veiculo * pontos_entrega * 1000
     max_evaluations = len(data['data_vehicles']) * len(data['data_nodes']) * 1000
-    dimension = 100
+    dimension = number_of_objectives * len(data['data_vehicles']) * len(data['data_nodes']) * 10
+    print("population_size: ", dimension)
 
     algorithm = GeneticAlgorithm(
         problem=problem,
-        population_size=100,
+        population_size=dimension,
         offspring_population_size=100,
         mutation=PermutationSwapMutation(1.0 / problem.number_of_variables),
         crossover=PMXCrossover(0.8),
@@ -124,7 +124,6 @@ def single_problem(data: dict, number_of_objectives: int):
             sub_route = []
     matrix_route.append(sub_route)
     print("Matrix route single problem: ", matrix_route)
-    print("Matrix route last subroute: ", matrix_route[2])
     # Each solution has a route
     data = {}
     data["solutions"] = []
@@ -155,8 +154,8 @@ def multi_problem(data: dict, number_of_objectives: int):
     #max_evaluations = 15000 #veiculo * pontos_entrega * 1000
     max_evaluations = len(data['data_vehicles']) * len(data['data_nodes']) * 1000
     print("Number of evaluations: ", max_evaluations)
-    dimension = 100
-
+    dimension = number_of_objectives * len(data['data_vehicles']) * len(data['data_nodes']) * 10
+    print("population_size: ", dimension)
     algorithm = NSGAII(
         problem=problem,
         population_size=dimension,
@@ -175,24 +174,10 @@ def multi_problem(data: dict, number_of_objectives: int):
     solutions_to_pass = []
     result_length = len(front)
     #Solucoes com menos de 3 objetivos
-    if number_of_objectives < 3:
-        if result_length == 3:
-            solutions_to_pass.append(front[0].variables)
-            solutions_to_pass.append(front[1].variables)
-            solutions_to_pass.append(front[result_length-1].variables)
-        elif result_length > 3:
-            solutions_to_pass.append(front[0].variables)
-            index_front_pareto = calculate_pareto(front)
-            solutions_to_pass.append(front[index_front_pareto].variables)
-            solutions_to_pass.append(front[result_length-1].variables)
-        elif result_length < 3:
-            for solution in front:
-                solutions_to_pass.append(solution.variables)
-    #Solucoes com mais de 3 objetivos
-    else:
-        array_index = calculate_solutions_more_3_objectives(front)
-        for index in array_index:
-            solutions_to_pass.append(front[index].variables)
+   
+    array_index = calculate_solutions_more_2_objectives(front)
+    for index in array_index:
+        solutions_to_pass.append(front[index].variables)
 
     solution_frontend = []
     sub_route = []
@@ -257,7 +242,7 @@ def calculate_pareto(objectives_array: list):
     print("Front pareto index: ", front_pareto_index)
     return front_pareto_index
 
-def calculate_solutions_more_3_objectives(objectives_array: list):
+def calculate_solutions_more_2_objectives(objectives_array: list):
     array_pd = []
     for solution in objectives_array:
         array_pd.append(solution.objectives)

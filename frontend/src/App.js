@@ -8,12 +8,8 @@ import Optimizer from "./components/Optimizer";
 import NavBarPage from "./components/NavbarPage";
 import Vehicle from "./components/Vehicle";
 import axios from "axios";
-import image from "./images/TESTE.png"; //Não vou precisar
 import { citiesData } from "./resources/cities";
 
-/**
- * Não usar o numberOf... para me guiar como index 
- */
 
 class App extends React.Component {
 
@@ -331,6 +327,11 @@ class App extends React.Component {
         alert("Introduza 1 veículo")
       }else {
         const final_json = this.create_final_json();
+        console.log("final json: ", final_json)
+        if(Object.keys(final_json).length === 0) {
+          alert("Capacidade ultrapassada")
+          return ;
+        }
         console.log(final_json)
         const response = await axios.post("/processor/", final_json);
         console.log("Received: ", response["data"])
@@ -344,7 +345,8 @@ class App extends React.Component {
       let array_json = [];
       let vehicle_json = [];
       let i = 0;
-
+      let total_demand = 0;
+      let total_car_demand = 0;
       this.state.list_centroDeFornecimento.forEach(element => {
         array_json.push({
           "node": i,
@@ -358,6 +360,7 @@ class App extends React.Component {
       });
 
       this.state.list_pontoDeEntrega.forEach(element => {
+        total_demand += parseInt(element.carga)
         array_json.push({
           "node": i,
           "city": element.city,
@@ -371,6 +374,7 @@ class App extends React.Component {
 
       i = 0;
       this.state.list_veiculo.forEach(element => {
+        total_car_demand += element.capacidade
         vehicle_json.push({
           "id": i,
           "capacity": element.capacidade,
@@ -378,14 +382,12 @@ class App extends React.Component {
         });
         i++;
       });
+      console.log(total_demand)
+      console.log(total_car_demand)
 
-      /* console.log(array_json)
-      array_json.forEach(element => {
-        let new_index = {}
-        new_index[element.node] = element.city
-        index_json = Object.assign(new_index, index_json);
-      }); */
-    
+      if (total_demand > total_car_demand) {  
+        return {};
+      }
       let final_json = {};
       /* final_json["index"] = index_json; */
       final_json["data_vehicles"] = vehicle_json
@@ -413,17 +415,12 @@ class App extends React.Component {
         render = <img src={this.state.image_path.default} />
       } */
       if(this.state.showSolution == true) {
-        //const raw_solution = '{"solutions":[{"solution":"1","route":[{"vehicle":"1","sub_route":["18","15","2","7","13","17","8","6","1","21","12","5","20"]},{"vehicle":"2","sub_route":["14","3","11","10","19","4","16"]},{"vehicle":"3","sub_route":["9"]}]},{"solution":"2","route":[{"vehicle":"1","sub_route":["18","15","2","7","13","17","8","6","1","21","12","5","20"]},{"vehicle":"2","sub_route":["3","9","11","10","19","4"]},{"vehicle":"3","sub_route":["14","16"]}]},{"solution":"3","route":[{"vehicle":"1","sub_route":["18","15","2","7","13","17","8","6","1","21","12","5","20"]},{"vehicle":"2","sub_route":["3","9","11","10","19","4"]},{"vehicle":"3","sub_route":["14","16"]}]}]}';
-        //const solution = JSON.stringify(this.state.solution)
         const solution = this.state.solution
-        //console.log(solution["solutions"])
-        //console.log(solution["solutions"].length)
-        //console.log("testing: ",solution["solutions"][0]["route"])
         console.log(solution["solutions"])
-        const show_optimal_solution = solution["solutions"].length == 3 ? true : false;
+        const show_optimal_solution = solution["solutions"].length >= 3 ? true : false;
         for(let i = 0; i < solution["solutions"].length; i++) {
           console.log(i)
-          if(show_optimal_solution == true && i == 1) {
+          if(show_optimal_solution == true && i == (solution["solutions"].length-1)) {
             render.push(<h4 style={{marginTop: "10px"}}>Solução {i} (Equilibrada)</h4>)
           } else {
             render.push(<h4 style={{marginTop: "10px"}}>Solução {i}</h4>)
