@@ -332,7 +332,7 @@ class App extends React.Component {
           alert("Capacidade ultrapassada")
           return ;
         }
-        console.log(final_json)
+        //console.log(final_json)
         const response = await axios.post("/processor/", final_json);
         console.log("Received: ", response["data"])
         const solution_json = JSON.parse(response["data"])
@@ -374,7 +374,7 @@ class App extends React.Component {
 
       i = 0;
       this.state.list_veiculo.forEach(element => {
-        total_car_demand += element.capacidade
+        total_car_demand += parseInt(element.capacidade)
         vehicle_json.push({
           "id": i,
           "capacity": element.capacidade,
