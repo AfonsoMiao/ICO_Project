@@ -1,8 +1,8 @@
 import math
 import random
 import json
-
-# Not sure to use
+import openrouteservice
+from openrouteservice import distance_matrix
 from jmetal.core.problem import PermutationProblem
 from jmetal.core.solution import PermutationSolution
 
@@ -13,14 +13,44 @@ class CENARIO1(PermutationProblem):
     def __init__(self, instance: str = None):
         super(CENARIO1, self).__init__()
 
-        distance_matrix, number_of_cities = self.__read_from_data(instance)
+        distance_matrix, number_of_cities, distances_to_warehouse = self.__create_distance_matrix(instance)
 
         self.distance_matrix = distance_matrix
-
+        self.distances_to_warehouse = distances_to_warehouse
         self.obj_directions = [self.MINIMIZE]
         self.number_of_variables = number_of_cities
         self.number_of_objectives = 1
         self.number_of_constraints = 0
+
+        print("Distance matrix: ", distance_matrix)
+        print("Number of cities: ", number_of_cities)
+
+
+    def __create_distance_matrix(self, data: dict):
+        """
+        Using API openrouteservice to calculate distance matrix
+        """
+        print("Data nodes: ", data['data_nodes'])
+        self.depot = [0]
+        coords = []
+        for i in range(len(data['data_nodes'])):
+            #print("Tuple: ", (node['latitude'], node['longitude']))
+            latitude = float(data['data_nodes'][i]['latitude'])
+            longitude = float(data['data_nodes'][i]['longitude'])
+            coords.insert(i, (longitude, latitude))
+
+        print("Coordinates: ", coords)
+        client = openrouteservice.Client(key='5b3ce3597851110001cf62483b6335326488469988f25ec7319aafb9') # Specify your personal API key
+        response_json = client.distance_matrix(coords, metrics=['distance', 'duration'], units="km")
+        matrix_distance = response_json['distances']
+        matrix_time = response_json['durations']
+        number_cities = len(data['data_nodes'])
+        distances_to_warehouse = [-1] * (number_cities - 1)
+        for i in range(number_cities - 1):
+            distances_to_warehouse[i] = matrix_distance[i+1][0]
+
+        print(distances_to_warehouse)
+        return matrix_distance, number_cities, distances_to_warehouse
 
     def __read_from_data(self, data: dict):
         """
@@ -73,7 +103,10 @@ class CENARIO1(PermutationProblem):
         for i in range(self.number_of_variables - 1):
             x = solution.variables[i]
             y = solution.variables[i + 1]
-            
+
+            if i == 0 and x != 0:
+                fitness += 9999999
+
             fitness += self.distance_matrix[x][y]
 
         first_city, last_city = solution.variables[0], solution.variables[-1]
@@ -88,7 +121,6 @@ class CENARIO1(PermutationProblem):
         new_solution = PermutationSolution(number_of_variables=self.number_of_variables,
                                            number_of_objectives=self.number_of_objectives)
         new_solution.variables = self.depot + random.sample(range(1,self.number_of_variables), k=self.number_of_variables-1)
-        #print("Solution: ", new_solution.variables)
         return new_solution
 
     @property
